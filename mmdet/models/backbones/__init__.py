@@ -12,10 +12,11 @@ from .resnext import ResNeXt
 from .ssd_vgg import SSDVGG
 from .trident_resnet import TridentResNet
 from .swin_transformer import SwinTransformer
-from .cbnet import CBResNet, CBRes2Net, CBSwinTransformer
+from .cbnet import CBResNet, CBRes2Net, CBResNeXt, CBSwinTransformer
 
 __all__ = [
     'RegNet', 'ResNet', 'ResNetV1d', 'ResNeXt', 'SSDVGG', 'HRNet', 'Res2Net',
     'HourglassNet', 'DetectoRS_ResNet', 'DetectoRS_ResNeXt', 'Darknet',
-    'ResNeSt', 'TridentResNet', 'SwinTransformer', 'CBResNet', 'CBRes2Net', 'CBSwinTransformer'
+    'ResNeSt', 'TridentResNet', 'SwinTransformer', 'CBResNet', 'CBRes2Net', 'CBResNeXt',
+    'CBSwinTransformer'
 ]
