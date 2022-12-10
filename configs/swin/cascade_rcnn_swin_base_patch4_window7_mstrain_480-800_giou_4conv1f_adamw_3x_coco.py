@@ -1,17 +1,22 @@
-_base_ = '../cascade_rcnn/cascade_rcnn_x101_64x4d_fpn_1x_coco.py'
+_base_ = [
+    '../_base_/models/cascade_rcnn_swin_fpn.py',
+    #'../_base_/datasets/coco_instance.py',
+    '../_base_/datasets/wider_challenge_detection.py',
+    '../_base_/schedules/schedule_1x.py', '../_base_/default_runtime.py'
+]
 
 model = dict(
-    type='CascadeRCNN',
     backbone=dict(
-        type='CBResNeXt',
-        cb_del_stages=1,
-        cb_inplanes=[64, 256, 512, 1024, 2048],
-        dcn=dict(type='DCNv2', deform_groups=1, fallback_on_stride=False),
-        stage_with_dcn=(False, True, True, True)
+        embed_dim=128,
+        depths=[2, 2, 18, 2],
+        num_heads=[4, 8, 16, 32],
+        window_size=7,
+        ape=False,
+        drop_path_rate=0.3,
+        patch_norm=True,
+        use_checkpoint=False
     ),
-    neck=dict(
-        type='CBFPN',
-    ),
+    neck=dict(in_channels=[128, 256, 512, 1024]),
     roi_head=dict(
         bbox_head=[
             dict(
@@ -71,53 +76,60 @@ model = dict(
                 loss_cls=dict(
                     type='CrossEntropyLoss', use_sigmoid=False, loss_weight=1.0),
                 loss_bbox=dict(type='GIoULoss', loss_weight=10.0))
-        ]
-    ),
-    test_cfg = dict(
-        rcnn=dict(
-            score_thr=0.001,
-            nms=dict(type='soft_nms'),
-        )
-    )
-)
+        ]))
 
 img_norm_cfg = dict(
     mean=[123.675, 116.28, 103.53], std=[58.395, 57.12, 57.375], to_rgb=True)
 
-# augmentation strategy originates from HTC
+# augmentation strategy originates from DETR / Sparse RCNN
 train_pipeline = [
     dict(type='LoadImageFromFile'),
     dict(type='LoadAnnotations', with_bbox=True),
-    dict(type='Resize',  img_scale=[(1600, 400), (1600, 1400)], multiscale_mode='range', keep_ratio=True),
     dict(type='RandomFlip', flip_ratio=0.5),
+    dict(type='AutoAugment',
+         policies=[
+             [
+                 dict(type='Resize',
+                      img_scale=[(480, 1333), (512, 1333), (544, 1333), (576, 1333),
+                                 (608, 1333), (640, 1333), (672, 1333), (704, 1333),
+                                 (736, 1333), (768, 1333), (800, 1333)],
+                      multiscale_mode='value',
+                      keep_ratio=True)
+             ],
+             [
+                 dict(type='Resize',
+                      img_scale=[(400, 1333), (500, 1333), (600, 1333)],
+                      multiscale_mode='value',
+                      keep_ratio=True),
+                 dict(type='RandomCrop',
+                      crop_type='absolute_range',
+                      crop_size=(384, 600),
+                      allow_negative_crop=True),
+                 dict(type='Resize',
+                      img_scale=[(480, 1333), (512, 1333), (544, 1333),
+                                 (576, 1333), (608, 1333), (640, 1333),
+                                 (672, 1333), (704, 1333), (736, 1333),
+                                 (768, 1333), (800, 1333)],
+                      multiscale_mode='value',
+                      override=True,
+                      keep_ratio=True)
+             ]
+         ]),
     dict(type='Normalize', **img_norm_cfg),
     dict(type='Pad', size_divisor=32),
     dict(type='DefaultFormatBundle'),
     dict(type='Collect', keys=['img', 'gt_bboxes', 'gt_labels']),
 ]
-test_pipeline = [
-    dict(type='LoadImageFromFile'),
-    dict(
-        type='MultiScaleFlipAug',
-        img_scale=(1600, 1400),
-        #(1920, 1024)
-        flip=False,
-        transforms=[
-            dict(type='Resize', keep_ratio=True),
-            dict(type='RandomFlip'),
-            dict(type='Normalize', **img_norm_cfg),
-            dict(type='Pad', size_divisor=32),
-            dict(type='ImageToTensor', keys=['img']),
-            dict(type='Collect', keys=['img']),
-        ])
-]
+data = dict(train=dict(pipeline=train_pipeline))
 
-data = dict(train=dict(pipeline=train_pipeline),
-            val=dict(pipeline=test_pipeline),
-            test=dict(pipeline=test_pipeline))
+optimizer = dict(_delete_=True, type='AdamW', lr=0.0001, betas=(0.9, 0.999), weight_decay=0.05,
+                 paramwise_cfg=dict(custom_keys={'absolute_pos_embed': dict(decay_mult=0.),
+                                                 'relative_position_bias_table': dict(decay_mult=0.),
+                                                 'norm': dict(decay_mult=0.)}))
+lr_config = dict(step=[27, 33])
+runner = dict(type='EpochBasedRunnerAmp', max_epochs=30)
 
 # do not use mmdet version fp16
-runner = dict(type='EpochBasedRunnerAmp', max_epochs=30)
 fp16 = None
 optimizer_config = dict(
     type="DistOptimizerHook",

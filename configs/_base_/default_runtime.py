@@ -20,4 +20,5 @@ load_from = None
 resume_from = None
 workflow = [('train', 1)]
 #work_dir = './work_dirs/cp_dummy_train'
-work_dir = '/home/honda/work_dirs/wp_cb_x101_fpn_000125_gpu1'
+#work_dir = '/home/honda/work_dirs/wp_cb_x101_fpn_00025_gpu1'
+work_dir = '/home/honda/work_dirs/wp_cb_swin_base_fpn_0005_gpu4'

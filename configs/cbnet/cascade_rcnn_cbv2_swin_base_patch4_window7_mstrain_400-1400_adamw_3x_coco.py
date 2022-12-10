@@ -1,5 +1,5 @@
 _base_ = [
-    '../swin/cascade_mask_rcnn_swin_base_patch4_window7_mstrain_480-800_giou_4conv1f_adamw_3x_coco.py'
+    '../swin/cascade_rcnn_swin_base_patch4_window7_mstrain_480-800_giou_4conv1f_adamw_3x_coco.py'
 ]
 
 model = dict(
@@ -23,7 +23,7 @@ img_norm_cfg = dict(
 # augmentation strategy originates from HTC
 train_pipeline = [
     dict(type='LoadImageFromFile'),
-    dict(type='LoadAnnotations', with_bbox=True, with_mask=True),
+    dict(type='LoadAnnotations', with_bbox=True),
     dict(type='RandomFlip', flip_ratio=0.5),
     dict(
         type='Resize',
@@ -33,7 +33,7 @@ train_pipeline = [
     dict(type='Normalize', **img_norm_cfg),
     dict(type='Pad', size_divisor=32),
     dict(type='DefaultFormatBundle'),
-    dict(type='Collect', keys=['img', 'gt_bboxes', 'gt_labels', 'gt_masks']),
+    dict(type='Collect', keys=['img', 'gt_bboxes', 'gt_labels']),
 ]
 test_pipeline = [
     dict(type='LoadImageFromFile'),
@@ -56,4 +56,5 @@ data = dict(samples_per_gpu=samples_per_gpu,
             train=dict(pipeline=train_pipeline),
             val=dict(pipeline=test_pipeline),
             test=dict(pipeline=test_pipeline))
-optimizer = dict(lr=0.0001*(samples_per_gpu/2))
+#optimizer = dict(lr=0.005*(samples_per_gpu/2))
+optimizer = dict(lr=0.005)
