@@ -7,7 +7,10 @@ model = dict(
         cb_del_stages=1,
         cb_inplanes=[64, 256, 512, 1024, 2048],
         dcn=dict(type='DCNv2', deform_groups=1, fallback_on_stride=False),
-        stage_with_dcn=(False, True, True, True)
+        stage_with_dcn=(False, True, True, True),
+        #init_cfg=dict(type='Pretrained', checkpoint='/home/honda/work_dirs/wp_cb_x101_fpn_00025_gpu2/epoch_21.pth')
+        #init_cfg=dict(type='Pretrained', checkpoint=None)
+        # type='Pretrained', checkpoint='open-mmlab://resnext101_64x4d')
     ),
     neck=dict(
         type='CBFPN',
@@ -88,7 +91,8 @@ img_norm_cfg = dict(
 train_pipeline = [
     dict(type='LoadImageFromFile'),
     dict(type='LoadAnnotations', with_bbox=True),
-    dict(type='Resize',  img_scale=[(1600, 400), (1600, 1400)], multiscale_mode='range', keep_ratio=True),
+    #(2048, 800), (2048, 1024) (1600, 400), (1600, 1400)
+    dict(type='Resize',  img_scale=[(2048, 800), (2048, 1024)], multiscale_mode='range', keep_ratio=True),
     dict(type='RandomFlip', flip_ratio=0.5),
     dict(type='Normalize', **img_norm_cfg),
     dict(type='Pad', size_divisor=32),
@@ -99,6 +103,7 @@ test_pipeline = [
     dict(type='LoadImageFromFile'),
     dict(
         type='MultiScaleFlipAug',
+        # (2048, 800), (2048, 1024) (1600, 400), (1600, 1400)
         img_scale=(1600, 1400),
         #(1920, 1024)
         flip=False,

@@ -2,6 +2,7 @@ _base_ = [
     '../swin/cascade_rcnn_swin_base_patch4_window7_mstrain_480-800_giou_4conv1f_adamw_3x_coco.py'
 ]
 
+#fp16 = dict(loss_scale=512.)
 model = dict(
     backbone=dict(
         type='CBSwinTransformer',
@@ -57,4 +58,6 @@ data = dict(samples_per_gpu=samples_per_gpu,
             val=dict(pipeline=test_pipeline),
             test=dict(pipeline=test_pipeline))
 #optimizer = dict(lr=0.005*(samples_per_gpu/2))
-optimizer = dict(lr=0.005)
+#optimizer = dict(lr=0.005)
+#optimizer = dict(lr=0.000001)
+optimizer = dict(lr=0.000025)
