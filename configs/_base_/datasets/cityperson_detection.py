@@ -1,10 +1,11 @@
 dataset_type = 'CocoDataset'
-classes = ('pedestrain',)
+#classes = ('pedestrain',)
+classes = ('person',)
 #data_root_coco = 'datasets/pedestrian_datasets/COCOPersons/'
-data_root_crowdhuman = '/home/honda/datasets/CrowdHuman/'
+#data_root_crowdhuman = '/home/honda/datasets/CrowdHuman/'
 data_root_cityperson = '/home/honda/datasets/CityPersons/'
-data_root_wider = '/home/honda/datasets/Wider_challenge/'
-data_root_ecp = '/home/honda/datasets/EuroCity/'
+#data_root_wider = '/home/honda/datasets/Wider_challenge/'
+#data_root_ecp = '/home/honda/datasets/EuroCity/'
 #data_root_caltech = 'datasets/pedestrian_datasets/Caltech/'
 img_norm_cfg = dict(
     mean=[123.675, 116.28, 103.53], std=[58.395, 57.12, 57.375], to_rgb=True)
@@ -22,7 +23,7 @@ train_pipeline = [
     dict(type='RandomFlip', flip_ratio=0.5),
     dict(type='Normalize', **img_norm_cfg),
     #dict(type='Pad', size_divisor=32),
-    dict(type='Pad', size_divisor=64),
+    dict(type='Pad', size_divisor=32),
     dict(type='DefaultFormatBundle'),
     dict(type='Collect', keys=['img', 'gt_bboxes', 'gt_labels']),
 ]
@@ -51,7 +52,7 @@ test_pipeline = [
             dict(type='RandomFlip'),
             dict(type='Normalize', **img_norm_cfg),
             #dict(type='Pad', size_divisor=32),
-            dict(type='Pad', size_divisor=64),
+            dict(type='Pad', size_divisor=32),
             dict(type='ImageToTensor', keys=['img']),
             dict(type='Collect', keys=['img']),
         ])
@@ -65,8 +66,6 @@ data = dict(
         ann_file= data_root_cityperson + 'train.json',
         img_prefix=data_root_cityperson,
         classes=classes,
-        #classes = ('pedestrain',),
-        # classes = ['person',],
         pipeline=train_pipeline),
     val=dict(
         type=dataset_type,

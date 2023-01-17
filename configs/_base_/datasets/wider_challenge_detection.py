@@ -14,7 +14,9 @@ train_pipeline = [
     #original [(1600, 400), (1600, 1400)]
     #dict(type='Resize', img_scale=(2048, 1024), keep_ratio=True),
     #ours [(2048, 800), (2048, 1024)]
-    dict(type='Resize', img_scale=[(1600, 400), (1600, 1400)], keep_ratio=True),
+    #[(2048, 800), (2048, 1024)],
+    dict(type='Resize', img_scale=[(2048, 800), (2048, 1024)], keep_ratio=True),
+    #dict(type='Resize', img_scale=[(1600, 400), (1600, 1400)], keep_ratio=True),
     #dict(type='Resize', img_scale=[(1216, 608), (2048, 1024)], keep_ratio=True),
     #HRNet
     #dict(type='Resize', img_scale=(1333, 800), keep_ratio=True),
@@ -22,7 +24,7 @@ train_pipeline = [
     dict(type='RandomFlip', flip_ratio=0.5),
     dict(type='Normalize', **img_norm_cfg),
     #dict(type='Pad', size_divisor=32),
-    dict(type='Pad', size_divisor=64),
+    dict(type='Pad', size_divisor=32),
     dict(type='DefaultFormatBundle'),
     dict(type='Collect', keys=['img', 'gt_bboxes', 'gt_labels']),
 ]
@@ -46,14 +48,15 @@ test_pipeline = [
         type='MultiScaleFlipAug',
         #(1920, 1024)
         #(2048, 1024)
-        img_scale=(1920, 1024),
+        #img_scale=(1920, 1024),
+        img_scale=(2048, 1024),
         flip=False,
         transforms=[
             dict(type='Resize', keep_ratio=True),
             dict(type='RandomFlip'),
             dict(type='Normalize', **img_norm_cfg),
             #dict(type='Pad', size_divisor=32),
-            dict(type='Pad', size_divisor=64),
+            dict(type='Pad', size_divisor=32),
             dict(type='ImageToTensor', keys=['img']),
             dict(type='Collect', keys=['img']),
         ])

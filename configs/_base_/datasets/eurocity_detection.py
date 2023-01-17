@@ -1,5 +1,6 @@
 dataset_type = 'CocoDataset'
-classes = ('pedestrain',) #ecp
+#classes = ('pedestrain',) #ecp
+classes = ('person',) #ecp
 #classes = ('pedestrian',) #ecp
 #classes = ('person',) crowdhuman and widerperson
 #data_root_coco = 'datasets/pedestrian_datasets/COCOPersons/'
@@ -24,7 +25,7 @@ train_pipeline = [
     dict(type='RandomFlip', flip_ratio=0.5),
     dict(type='Normalize', **img_norm_cfg),
     #dict(type='Pad', size_divisor=32),
-    dict(type='Pad', size_divisor=64),
+    dict(type='Pad', size_divisor=32),
     dict(type='DefaultFormatBundle'),
     dict(type='Collect', keys=['img', 'gt_bboxes', 'gt_labels']),
 ]
@@ -53,7 +54,7 @@ test_pipeline = [
             dict(type='RandomFlip'),
             dict(type='Normalize', **img_norm_cfg),
             #dict(type='Pad', size_divisor=32),
-            dict(type='Pad', size_divisor=64),
+            dict(type='Pad', size_divisor=32),
             dict(type='ImageToTensor', keys=['img']),
             dict(type='Collect', keys=['img']),
         ])
@@ -66,7 +67,6 @@ data = dict(
         ann_file=data_root_ecp + 'day_train_all.json',
         img_prefix=data_root_ecp,
         classes = classes,
-        #classes = ['person',],
         pipeline=train_pipeline),
     val=dict(
         type=dataset_type,

@@ -7,6 +7,7 @@ from mmdet.utils import get_root_logger
 from ..builder import BACKBONES
 from .resnet import ResNet, build_norm_layer, _BatchNorm
 from .res2net import Res2Net
+#from .hrnet import HRNet
 from .resnext import ResNeXt
 from .swin_transformer import SwinTransformer
 
@@ -94,6 +95,11 @@ class _ResNeXt(_CBSubnet, ResNeXt):
     def __init__(self, **kwargs):
         _CBSubnet.__init__(self)
         ResNeXt.__init__(self, **kwargs)
+
+#class _HRNet(_CBSubnet, HRNet):
+#    def __init__(self, **kwargs):
+#        _CBSubnet.__init__(self)
+#        HRNet.__init__(self, **kwargs)
 
 class _CBNet(BaseModule):
     def _freeze_stages(self):
@@ -209,6 +215,10 @@ class CBRes2Net(_CBResNet):
 class CBResNeXt(_CBResNet):
     def __init__(self, **kwargs):
         super().__init__(net=_ResNeXt, **kwargs)
+#@BACKBONES.register_module()
+#class CBHRNet(_CBHRNet):
+#    def __init__(self, **kwargs):
+#        super().__init__(net=_HRNet, **kwargs)
 
 '''
 For Swin Transformer

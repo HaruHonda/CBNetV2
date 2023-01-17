@@ -10,7 +10,7 @@ model = dict(
         stage_with_dcn=(False, True, True, True),
         #init_cfg=dict(type='Pretrained', checkpoint='/home/honda/work_dirs/wp_cb_x101_fpn_00025_gpu2/epoch_21.pth')
         #init_cfg=dict(type='Pretrained', checkpoint=None)
-        # type='Pretrained', checkpoint='open-mmlab://resnext101_64x4d')
+        #type='Pretrained', checkpoint='open-mmlab://resnext101_64x4d')
     ),
     neck=dict(
         type='CBFPN',

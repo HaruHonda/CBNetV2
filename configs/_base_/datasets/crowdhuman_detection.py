@@ -1,4 +1,5 @@
 dataset_type = 'CocoDataset'
+classes = ('person',)
 #data_root_coco = 'datasets/pedestrian_datasets/COCOPersons/'
 data_root_crowdhuman = '/home/honda/datasets/CrowdHuman/'
 #data_root_cityperson = '/home/honda/datasets/CityPersons/'
@@ -21,7 +22,7 @@ train_pipeline = [
     dict(type='RandomFlip', flip_ratio=0.5),
     dict(type='Normalize', **img_norm_cfg),
     #dict(type='Pad', size_divisor=32),
-    dict(type='Pad', size_divisor=64),
+    dict(type='Pad', size_divisor=32),
     dict(type='DefaultFormatBundle'),
     dict(type='Collect', keys=['img', 'gt_bboxes', 'gt_labels']),
 ]
@@ -50,7 +51,7 @@ test_pipeline = [
             dict(type='RandomFlip'),
             dict(type='Normalize', **img_norm_cfg),
             #dict(type='Pad', size_divisor=32),
-            dict(type='Pad', size_divisor=64),
+            dict(type='Pad', size_divisor=32),
             dict(type='ImageToTensor', keys=['img']),
             dict(type='Collect', keys=['img']),
         ])
@@ -62,17 +63,19 @@ data = dict(
         type=dataset_type,
         ann_file=data_root_crowdhuman + 'train.json',
         img_prefix=data_root_crowdhuman + 'CrowdHuman_train',
-        classes = ('person',),
+        classes=classes,
         #classes = ['person',],
         pipeline=train_pipeline),
     val=dict(
         type=dataset_type,
         ann_file=data_root_crowdhuman + 'val.json',
         img_prefix=data_root_crowdhuman + 'CrowdHuman_val',
+        classes=classes,
         pipeline=test_pipeline),
     test=dict(
         type=dataset_type,
         ann_file=data_root_crowdhuman + 'val.json',
         img_prefix=data_root_crowdhuman + 'CrowdHuman_val',
+        classes=classes,
         pipeline=test_pipeline))
 evaluation = dict(interval=750, metric='bbox')
