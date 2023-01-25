@@ -3,7 +3,8 @@ dataset_type = 'CocoDataset'
 classes = ('person',)
 #data_root_coco = 'datasets/pedestrian_datasets/COCOPersons/'
 #data_root_crowdhuman = '/home/honda/datasets/CrowdHuman/'
-data_root_cityperson = '/home/honda/datasets/CityPersons/'
+#data_root_cityperson = '/home/honda/datasets/CityPersons/'
+data_root_wider = '/content/drive/MyDrive/Pedestrian/datasets/Wider_challenge/'
 #data_root_wider = '/home/honda/datasets/Wider_challenge/'
 #data_root_ecp = '/home/honda/datasets/EuroCity/'
 #data_root_caltech = 'datasets/pedestrian_datasets/Caltech/'
@@ -12,10 +13,12 @@ img_norm_cfg = dict(
 train_pipeline = [
     dict(type='LoadImageFromFile'),
     dict(type='LoadAnnotations', with_bbox=True),
-    #original
+    #original [(1600, 400), (1600, 1400)]
     #dict(type='Resize', img_scale=(2048, 1024), keep_ratio=True),
-    #ours
+    #ours [(2048, 800), (2048, 1024)]
+    #[(2048, 800), (2048, 1024)],
     dict(type='Resize', img_scale=[(2048, 800), (2048, 1024)], keep_ratio=True),
+    #dict(type='Resize', img_scale=[(1600, 400), (1600, 1400)], keep_ratio=True),
     #dict(type='Resize', img_scale=[(1216, 608), (2048, 1024)], keep_ratio=True),
     #HRNet
     #dict(type='Resize', img_scale=(1333, 800), keep_ratio=True),
@@ -45,6 +48,9 @@ test_pipeline = [
     dict(type='LoadImageFromFile'),
     dict(
         type='MultiScaleFlipAug',
+        #(1920, 1024)
+        #(2048, 1024)
+        #img_scale=(1920, 1024),
         img_scale=(2048, 1024),
         flip=False,
         transforms=[
@@ -62,24 +68,22 @@ data = dict(
     workers_per_gpu=6,
     train=dict(
         type=dataset_type,
-        #ann_file= data_root_cityperson + 'train_cp_new_mmdet.json',
-        #ann_file= data_root_cityperson + 'train.json',
-        ann_file=data_root_cityperson + 'train2.json',
-        img_prefix=data_root_cityperson,
-        classes=classes,
+        ann_file=(data_root_wider + "ad_train.json", data_root_wider + "sur_train.json"),
+        img_prefix=(data_root_wider + "train_images/", data_root_wider + "train_images/"),
+        classes = classes,
+        # classes = ['pedestrain',],
+        #classes = ['person',],
         pipeline=train_pipeline),
     val=dict(
         type=dataset_type,
-        #ann_file=data_root_cityperson + 'val_gt_for_mmdetction.json',
-        ann_file=data_root_cityperson + 'val_gt_for_mmdetction2.json',
-        img_prefix=data_root_cityperson + '/leftImg8bit_trainvaltest/leftImg8bit/val_all_in_folder/',
-        classes=classes,
+        ann_file=data_root_wider + "val.json",
+        img_prefix=data_root_wider + "val_data/",
+        classes = classes,
         pipeline=test_pipeline),
     test=dict(
         type=dataset_type,
-        #ann_file=data_root_cityperson + 'val_gt_for_mmdetction.json',
-        ann_file=data_root_cityperson + 'val_gt_for_mmdetction2.json',
-        img_prefix=data_root_cityperson + '/leftImg8bit_trainvaltest/leftImg8bit/val_all_in_folder/',
-        classes=classes,
+        ann_file=data_root_wider + "val.json",
+        img_prefix=data_root_wider + "val_data/",
+        classes = classes,
         pipeline=test_pipeline))
 evaluation = dict(interval=750, metric='bbox')
