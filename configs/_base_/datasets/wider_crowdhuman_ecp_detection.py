@@ -3,6 +3,7 @@ classes = ('person',)
 #classes = ('pedestrain', )
 data_root_crowdhuman = '/home/honda/datasets/CrowdHuman/'
 data_root_wider = '/home/honda/datasets/Wider_challenge/'
+data_root_ecp = '/home/honda/datasets/EuroCity/'
 img_norm_cfg = dict(
     mean=[123.675, 116.28, 103.53], std=[58.395, 57.12, 57.375], to_rgb=True)
 train_pipeline = [
@@ -18,7 +19,6 @@ train_pipeline = [
     #dict(type='Resize', img_scale=[(1600, 400), (1600, 1400)], keep_ratio=True),
     dict(type='RandomFlip', flip_ratio=0.5),
     dict(type='Normalize', **img_norm_cfg),
-    #dict(type='Pad', size_divisor=32),
     dict(type='Pad', size_divisor=32),
     dict(type='DefaultFormatBundle'),
     dict(type='Collect', keys=['img', 'gt_bboxes', 'gt_labels']),
@@ -58,20 +58,20 @@ data = dict(
     workers_per_gpu=6,
     train=dict(
         type=dataset_type,
-        ann_file=(data_root_crowdhuman + 'train.json',data_root_wider + "ad_train2.json", data_root_wider + "sur_train2.json"),
-        img_prefix=(data_root_crowdhuman + 'CrowdHuman_train',data_root_wider + "train_images/", data_root_wider + "train_images/"),
+        ann_file=(data_root_crowdhuman + 'train.json',data_root_wider + "ad_train2.json", data_root_wider + "sur_train2.json",data_root_ecp + 'day_train_all2.json'),
+        img_prefix=(data_root_crowdhuman + 'CrowdHuman_train',data_root_wider + "train_images/", data_root_wider + "train_images/",data_root_ecp),
         classes = classes,
         pipeline=train_pipeline),
     val=dict(
         type=dataset_type,
-        ann_file=(data_root_crowdhuman + 'val.json', data_root_wider + "val2.json"),
-        img_prefix=(data_root_crowdhuman + 'CrowdHuman_val',data_root_wider + "val_data/"),
+        ann_file=(data_root_crowdhuman + 'val.json', data_root_wider + "val2.json",data_root_ecp + 'day_val2.json'),
+        img_prefix=(data_root_crowdhuman + 'CrowdHuman_val',data_root_wider + "val_data/",data_root_ecp),
         classes=classes,
         pipeline=test_pipeline),
     test=dict(
         type=dataset_type,
-        ann_file=(data_root_crowdhuman + 'val.json', data_root_wider + "val2.json"),
-        img_prefix=(data_root_crowdhuman + 'CrowdHuman_val',data_root_wider + "val_data/"),
+        ann_file=(data_root_crowdhuman + 'val.json', data_root_wider + "val2.json",data_root_ecp + 'day_val2.json'),
+        img_prefix=(data_root_crowdhuman + 'CrowdHuman_val',data_root_wider + "val_data/",data_root_ecp),
         classes=classes,
         pipeline=test_pipeline))
 evaluation = dict(interval=750, metric='bbox')

@@ -35,7 +35,7 @@ class _CBSubnet(BaseModule):
             m.eval()
             for param in m.parameters():
                 param.requires_grad = False
-    
+
     def del_layers(self, del_stages):
         self.del_stages = del_stages
         if self.del_stages>=0:
